@@ -26,9 +26,9 @@ defmodule Practice.RepoModule do
     Repo.insert_all("artists", [[name: "Alux Nahual"]])
 
     Repo.insert_all("artists", [
-      %{name: "Tambor de la tribu", inserted_at: DateTime.utc_now()},
-      %{name: "Vilma palma", inserted_at: DateTime.utc_now()},
-      %{name: "Patricio Rey", inserted_at: DateTime.utc_now()},
+        %{name: "Tambor de la tribu", inserted_at: DateTime.utc_now()},
+        %{name: "Vilma palma", inserted_at: DateTime.utc_now()},
+        %{name: "Patricio Rey", inserted_at: DateTime.utc_now()},
       ], returning: [:name])
 
     Repo.update_all("artists", set: [updated_at: DateTime.utc_now()])
