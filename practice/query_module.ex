@@ -107,7 +107,7 @@ defmodule Practice.QueryModule do
     #albums_query = from a in albums_by_miles, select: a.title
 
     #bindings still available
-    albums_query = from [a, ar] in albums_by_miles, select: %{album: a.title, artist: ar.name}
+    #albums_query = from [a, ar] in albums_by_miles, select: %{album: a.title, artist: ar.name}
 
     track_query =
       from a in albums_by_miles,
@@ -129,6 +129,63 @@ defmodule Practice.QueryModule do
     album_query = from [albums: a] in albums_by, select: a.title
     Repo.all(album_query)
   end
+
+  defp by_artist(query, artist_name) do
+    from a in query,
+    join: ar in "artists", on: a.artist_id == ar.id,
+    where: ar.name == ^artist_name
+  end
+
+  defp with_tracks_longer_than(query, duration) do
+    from a in query,
+    join: t in "tracks", on: t.album_id == a.id,
+    where: t.duration > ^duration,
+    distinct: true
+  end
+
+  defp title_only(query) do
+    from a in query, select: a.title
+  end
+
+  def queries_with_functions() do
+    q =
+      "albums"
+      |>by_artist("Miles Davis")
+      |>with_tracks_longer_than(720)
+      |>title_only
+
+    Repo.all(q)
+  end
+
+  def combining_queries() do
+    albums_by = from a in "albums",
+    join: ar in "artists",
+    on: a.artist_id == ar.id,
+    where: ar.name == "Miles Davis"
+
+    q = from [a, ar] in albums_by,
+    where: ar.name == "Bobby Hutcherson",
+    select: %{album: a.title, artist: ar.name}
+
+    Repo.all q
+
+
+    q = from a in "albums",
+    join: ar in "artists", on: a.artist_id == a.id,
+    where: ar.name == "Miles Davis" or ar.name == "Bobby Hutcherson",
+    select: %{artist: ar.name, album: a.title}
+
+    Repo.all q
+
+    q = from [a, ar] in albums_by, or_where: ar.name == "Bobby Hutcherson", select: %{artist: ar.name, album: a.title}
+    Repo.all q
+  end
+
+  def query_with_repo() do
+    from(t in "tracks", where: t.title == "Autum Leaves")
+    |>Repo.update_all(set: [title: "Autumn Leaves"])
+  end
+
 end
 
 #IO.inspect(Practice.QueryModule.query_demo())
@@ -138,4 +195,7 @@ end
 #IO.inspect(Practice.QueryModule.ordering())
 #IO.inspect(Practice.QueryModule.demo_joins())
 #IO.inspect(Practice.QueryModule.query_parts())
-IO.inspect(Practice.QueryModule.named_bindings())
+#IO.inspect(Practice.QueryModule.named_bindings())
+#IO.inspect(Practice.QueryModule.queries_with_functions())
+#IO.inspect(Practice.QueryModule.combining_queries())
+IO.inspect(Practice.QueryModule.query_with_repo())
