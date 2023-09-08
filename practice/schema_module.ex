@@ -55,9 +55,23 @@ defmodule Practice.SchemaModule do
 
     Repo.all q
   end
+
+  def seed_with_schemas() do
+    Repo.insert(
+      %Artist{
+        name: "Vilma palma",
+        tracks: [
+          %Track{
+            title: "Borracho hasta el amanecer"
+          }
+        ]
+      }
+    )
+  end
 end
 #IO.inspect(Practice.SchemaModule.data_schemaless())
 #IO.inspect(Practice.SchemaModule.query_with_schema())
 #IO.inspect(Practice.SchemaModule.inserting())
 #IO.inspect(Practice.SchemaModule.deleting())
-IO.inspect(Practice.SchemaModule.getting_associated)
+#IO.inspect(Practice.SchemaModule.getting_associated)
+IO.inspect(Practice.SchemaModule.seed_with_schemas())
