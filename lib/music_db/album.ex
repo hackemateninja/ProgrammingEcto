@@ -12,7 +12,6 @@ defmodule MusicDB.Album do
 
   schema "albums" do
     field(:title, :string)
-    field(:release_date, :date)
     timestamps()
 
     belongs_to(:artist, Artist)
